@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>League Tables — Five to Nine Sports</title>
+<meta name="description" content="Live standings, results and fixtures for Five to Nine Sports corporate leagues.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#CC1B2B;
+    --red-dark:#A31522;
+    --ink:#101114;
+    --paper:#FFFFFF;
+    --pitch:#F4F5F7;
+    --line:#E3E5E9;
+    --muted:#6B7078;
+    --display:'Oswald',Arial Narrow,sans-serif;
+    --body:'Inter',Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--pitch);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+  a{color:inherit}
+
+  /* ---------- header ---------- */
+  header{background:var(--ink);color:#fff}
+  .head-inner{max-width:1080px;margin:0 auto;padding:20px 20px 0;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px}
+  .wordmark{font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;white-space:nowrap}
+  .wordmark em{color:var(--red);font-style:normal}
+  .head-inner .page-label{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:.28em;text-transform:uppercase;color:#9AA0A8}
+  .head-inner .back{margin-left:auto;font-size:13px;color:#9AA0A8;text-decoration:none;border-bottom:1px solid transparent}
+  .head-inner .back:hover{color:#fff;border-color:var(--red)}
+  .picker{max-width:1080px;margin:0 auto;padding:18px 20px 22px;display:flex;flex-wrap:wrap;gap:8px}
+  .pill{font-family:var(--display);font-weight:500;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:#C7CBD1;background:transparent;border:1px solid #3A3D43;padding:8px 16px;cursor:pointer;transition:all .15s}
+  .pill:hover{color:#fff;border-color:#6B7078}
+  .pill[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+  .pill:focus-visible,.wordmark:focus-visible,.back:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+
+  /* ---------- league masthead ---------- */
+  .masthead{max-width:1080px;margin:0 auto;padding:34px 20px 10px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 18px}
+  .masthead h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,5vw,44px);line-height:1.05;text-transform:uppercase;letter-spacing:.01em}
+  .masthead .meta{font-size:13px;color:var(--muted);padding-bottom:6px}
+  .ribbon{margin-left:auto;background:var(--red);color:#fff;font-family:var(--display);font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;padding:7px 14px}
+
+  /* ---------- layout ---------- */
+  main{max-width:1080px;margin:0 auto;padding:14px 20px 60px;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:24px;align-items:start}
+  @media (max-width:820px){main{grid-template-columns:1fr}}
+  .card{background:var(--paper);border:1px solid var(--line)}
+  .card-title{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.16em;text-transform:uppercase;padding:14px 18px;border-bottom:2px solid var(--ink)}
+  .card-title span{color:var(--red)}
+
+  /* ---------- standings ---------- */
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  thead th{background:var(--ink);color:#fff;font-family:var(--display);font-weight:500;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:9px 8px;text-align:center;white-space:nowrap}
+  thead th.team{text-align:left;padding-left:18px}
+  tbody td{padding:11px 8px;border-bottom:1px solid var(--line);text-align:center;font-size:14px;white-space:nowrap}
+  tbody td.team{text-align:left;padding-left:18px;font-weight:600;white-space:normal;min-width:140px}
+  tbody tr:last-child td{border-bottom:none}
+  td.pos{color:var(--muted);font-weight:600;width:34px}
+  td.pts{font-weight:700;font-size:15px}
+  tbody tr.lead td{background:rgba(204,27,43,.05)}
+  tbody tr.lead td.pos{color:var(--red)}
+  tbody tr.lead td:first-child{box-shadow:inset 3px 0 0 var(--red)}
+  .table-note{padding:10px 18px 14px;font-size:12px;color:var(--muted)}
+
+  /* ---------- fixtures ---------- */
+  .week{border-bottom:1px solid var(--line)}
+  .week:last-child{border-bottom:none}
+  .week-label{font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:12px 18px 4px}
+  .fixture{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding:8px 18px}
+  .fixture .home{text-align:right}
+  .fixture .away{text-align:left}
+  .fixture .side{font-size:13.5px;font-weight:500;line-height:1.3}
+  .fixture .side.won{font-weight:700}
+  .score{font-family:var(--display);font-weight:600;font-size:15px;background:var(--ink);color:#fff;padding:3px 10px;min-width:58px;text-align:center;letter-spacing:.08em}
+  .score.tbd{background:transparent;border:1px solid var(--line);color:var(--muted);font-size:12px;letter-spacing:.06em}
+  .fixture-date{font-size:11px;color:var(--muted);text-align:center;grid-column:2}
+
+  /* ---------- states ---------- */
+  .banner{max-width:1080px;margin:16px auto 0;padding:0 20px}
+  .banner-inner{background:#FFF6E5;border:1px solid #F0DCB0;color:#7A5A12;font-size:13px;padding:10px 14px;display:none}
+  .loading{padding:60px 20px;text-align:center;color:var(--muted);font-size:14px}
+  footer{background:var(--ink);color:#9AA0A8;font-size:13px}
+  .foot-inner{max-width:1080px;margin:0 auto;padding:26px 20px;display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center}
+  .foot-inner .tag{font-family:var(--display);text-transform:uppercase;letter-spacing:.1em;color:#fff;font-size:14px}
+  .foot-inner .tag em{color:var(--red);font-style:normal}
+  .foot-inner a{color:#C7CBD1}
+  .updated{margin-left:auto}
+  @media (prefers-reduced-motion:no-preference){
+    .card{animation:rise .35s ease both}
+    @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-inner">
+    <a class="wordmark" href="https://fivetoninesports.com">Five to Nine <em>Sports</em></a>
+    <span class="page-label">League Tables</span>
+    <a class="back" href="https://fivetoninesports.com">fivetoninesports.com →</a>
+  </div>
+  <nav class="picker" id="picker" aria-label="Choose a league"></nav>
+</header>
+
+<div class="banner"><div class="banner-inner" id="banner"></div></div>
+
+<div class="masthead" id="masthead" hidden>
+  <h1 id="league-name"></h1>
+  <div class="meta" id="league-meta"></div>
+  <div class="ribbon" id="ribbon"></div>
+</div>
+
+<div class="loading" id="loading">Loading standings…</div>
+
+<main id="main" hidden>
+  <section class="card" aria-labelledby="standings-h">
+    <div class="card-title" id="standings-h">Standings <span>· live</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th aria-label="Position">#</th><th class="team">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th id="th-for">F</th><th id="th-against">A</th><th id="th-diff">+/−</th><th>Pts</th></tr>
+        </thead>
+        <tbody id="standings-body"></tbody>
+      </table>
+    </div>
+    <div class="table-note" id="scoring-note"></div>
+  </section>
+
+  <section class="card" aria-labelledby="fixtures-h">
+    <div class="card-title" id="fixtures-h">Results &amp; Fixtures</div>
+    <div id="fixtures-body"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <span class="tag">Compete on the pitch. <em>Connect off it.</em></span>
+    <a href="mailto:Hello@fivetoninesports.com">Hello@fivetoninesports.com</a>
+    <span class="updated" id="updated"></span>
+  </div>
+</footer>
+
+<script>
+/* ================= CONFIG ================= */
+var SHEET_ID = "1BZyM2u6y3m9ie4slrLedjzwn2fnZU7lJ0-3NQdNUAsU"; // Five to Nine Sports — League Results (Google Sheet)
+
+/* ================= CORE (pure functions) ================= */
+function parseCSV(text){
+  var rows=[],row=[],cur="",inQ=false;
+  for(var i=0;i<text.length;i++){
+    var ch=text[i];
+    if(inQ){
+      if(ch==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else inQ=false; }
+      else cur+=ch;
+    }else{
+      if(ch==='"') inQ=true;
+      else if(ch===','){row.push(cur);cur="";}
+      else if(ch==='\n'){row.push(cur);rows.push(row);row=[];cur="";}
+      else if(ch!=='\r') cur+=ch;
+    }
+  }
+  if(cur!==""||row.length){row.push(cur);rows.push(row);}
+  return rows;
+}
+function toObjects(rows){
+  if(!rows.length) return [];
+  var head=rows[0].map(function(h){return h.trim().toLowerCase();});
+  return rows.slice(1).filter(function(r){return r.some(function(c){return c.trim()!=="";});})
+    .map(function(r){var o={};head.forEach(function(h,i){o[h]=(r[i]||"").trim();});return o;});
+}
+function computeStandings(fixtures){
+  var t={};
+  function team(n){ if(!t[n]) t[n]={name:n,p:0,w:0,d:0,l:0,f:0,a:0}; return t[n]; }
+  fixtures.forEach(function(fx){
+    if(fx.home) team(fx.home);
+    if(fx.away) team(fx.away);
+    if(!fx.played) return;
+    var h=team(fx.home),a=team(fx.away);
+    h.p++;a.p++;
+    h.f+=fx.hs;h.a+=fx.as;a.f+=fx.as;a.a+=fx.hs;
+    if(fx.hs>fx.as){h.w++;a.l++;}
+    else if(fx.hs<fx.as){a.w++;h.l++;}
+    else {h.d++;a.d++;}
+  });
+  var list=Object.keys(t).map(function(k){
+    var x=t[k];x.gd=x.f-x.a;x.pts=x.w*3+x.d;return x;
+  });
+  list.sort(function(x,y){
+    return y.pts-x.pts || y.gd-x.gd || y.f-x.f || x.name.localeCompare(y.name);
+  });
+  return list;
+}
+function normaliseFixture(o){
+  var hs=o["home score"],as=o["away score"];
+  var played = hs!=="" && as!=="" && !isNaN(parseInt(hs,10)) && !isNaN(parseInt(as,10));
+  return {
+    league:o["league id"], week:parseInt(o["week"],10)||0, date:o["date"]||"",
+    home:o["home team"], away:o["away team"],
+    hs:played?parseInt(hs,10):null, as:played?parseInt(as,10):null, played:played
+  };
+}
+
+/* ================= FALLBACK SAMPLE DATA ================= */
+var FALLBACK={
+  leagues:[{"league id":"LON-FTB-LAW","league name":"London Law League — 6-a-side Football","sport":"Football","location":"London","season":"Season One","status":"Active"}],
+  fixtures:[
+    {"league id":"LON-FTB-LAW","week":"1","date":"2026-09-10","home team":"Whitmore & Vale","away team":"Ashcombe Legal","home score":"3","away score":"1"},
+    {"league id":"LON-FTB-LAW","week":"1","date":"2026-09-10","home team":"Barrow Chambers","away team":"Kestrel Law","home score":"2","away score":"2"},
+    {"league id":"LON-FTB-LAW","week":"1","date":"2026-09-10","home team":"Marlowe Hart","away team":"Fenwick Rowe","home score":"0","away score":"4"},
+    {"league id":"LON-FTB-LAW","week":"1","date":"2026-09-10","home team":"Calder & Finch","away team":"Osprey Legal","home score":"1","away score":"0"},
+    {"league id":"LON-FTB-LAW","week":"2","date":"2026-09-17","home team":"Ashcombe Legal","away team":"Barrow Chambers","home score":"2","away score":"3"},
+    {"league id":"LON-FTB-LAW","week":"2","date":"2026-09-17","home team":"Kestrel Law","away team":"Marlowe Hart","home score":"5","away score":"1"},
+    {"league id":"LON-FTB-LAW","week":"2","date":"2026-09-17","home team":"Fenwick Rowe","away team":"Calder & Finch","home score":"2","away score":"2"},
+    {"league id":"LON-FTB-LAW","week":"2","date":"2026-09-17","home team":"Osprey Legal","away team":"Whitmore & Vale","home score":"1","away score":"2"},
+    {"league id":"LON-FTB-LAW","week":"3","date":"2026-09-24","home team":"Whitmore & Vale","away team":"Barrow Chambers","home score":"","away score":""},
+    {"league id":"LON-FTB-LAW","week":"3","date":"2026-09-24","home team":"Ashcombe Legal","away team":"Kestrel Law","home score":"","away score":""}
+  ]
+};
+
+/* ================= APP ================= */
+(function(){
+  if(typeof document==="undefined") return; // allows core functions to be unit-tested in Node
+  var state={leagues:[],fixtures:[],current:null};
+
+  function gviz(sheet){
+    return fetch("https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq?tqx=out:csv&sheet="+encodeURIComponent(sheet),{cache:"no-store"})
+      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.text(); })
+      .then(function(txt){
+        var objs=toObjects(parseCSV(txt));
+        // A private/unshared sheet returns a Google login page, not CSV — treat as failure
+        if(!objs.length || !("league id" in objs[0])) throw new Error("bad data");
+        return objs;
+      });
+  }
+
+  function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML;}
+  function fmtDate(s){
+    var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+    if(!m) return esc(s);
+    var d=new Date(Date.UTC(+m[1],+m[2]-1,+m[3]));
+    return d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
+  }
+
+  function render(){
+    var lg=state.current; if(!lg) return;
+    var isPadel=(lg.sport||"").toLowerCase()==="padel";
+    document.getElementById("league-name").textContent=lg["league name"]||lg["league id"];
+    document.getElementById("league-meta").textContent=[lg.sport,lg.location,lg.season].filter(Boolean).join(" · ");
+    document.getElementById("th-for").textContent=isPadel?"GW":"F";
+    document.getElementById("th-against").textContent=isPadel?"GL":"A";
+    document.getElementById("scoring-note").textContent=(isPadel
+      ?"GW games won · GL games lost · Win 3 pts, draw 1, loss 0."
+      :"F goals for · A goals against · Win 3 pts, draw 1, loss 0.")
+      +" Ties broken by difference, then scored.";
+
+    var fx=state.fixtures.filter(function(f){return f.league===lg["league id"];});
+    var played=fx.filter(function(f){return f.played;});
+    var weeksPlayed=played.map(function(f){return f.week;});
+    var wk=weeksPlayed.length?Math.max.apply(null,weeksPlayed):0;
+    document.getElementById("ribbon").textContent=wk?("After Matchweek "+wk):"Season starting soon";
+
+    // standings
+    var rows=computeStandings(fx);
+    var tb=document.getElementById("standings-body");
+    tb.innerHTML=rows.map(function(r,i){
+      return '<tr class="'+(i===0&&r.p>0?"lead":"")+'">'
+        +'<td class="pos">'+(i+1)+'</td>'
+        +'<td class="team">'+esc(r.name)+'</td>'
+        +'<td>'+r.p+'</td><td>'+r.w+'</td><td>'+r.d+'</td><td>'+r.l+'</td>'
+        +'<td>'+r.f+'</td><td>'+r.a+'</td><td>'+(r.gd>0?"+":"")+r.gd+'</td>'
+        +'<td class="pts">'+r.pts+'</td></tr>';
+    }).join("");
+
+    // fixtures grouped by week, latest played first, then upcoming
+    var byWeek={};
+    fx.forEach(function(f){ (byWeek[f.week]=byWeek[f.week]||[]).push(f); });
+    var weeks=Object.keys(byWeek).map(Number).sort(function(a,b){return a-b;});
+    var fb=document.getElementById("fixtures-body");
+    fb.innerHTML=weeks.map(function(w){
+      var games=byWeek[w];
+      return '<div class="week"><div class="week-label">Week '+w
+        +(games[0].date?' · '+fmtDate(games[0].date):'')+'</div>'
+        +games.map(function(g){
+          if(g.played){
+            return '<div class="fixture">'
+              +'<div class="side home '+(g.hs>g.as?"won":"")+'">'+esc(g.home)+'</div>'
+              +'<div class="score">'+g.hs+' – '+g.as+'</div>'
+              +'<div class="side away '+(g.as>g.hs?"won":"")+'">'+esc(g.away)+'</div></div>';
+          }
+          return '<div class="fixture">'
+            +'<div class="side home">'+esc(g.home)+'</div>'
+            +'<div class="score tbd">v</div>'
+            +'<div class="side away">'+esc(g.away)+'</div></div>';
+        }).join("")+'</div>';
+    }).join("") || '<div class="loading">Fixtures will appear here once the season is scheduled.</div>';
+
+    document.getElementById("masthead").hidden=false;
+    document.getElementById("main").hidden=false;
+    document.getElementById("loading").style.display="none";
+  }
+
+  function buildPicker(){
+    var p=document.getElementById("picker");
+    p.innerHTML="";
+    state.leagues.forEach(function(lg){
+      var b=document.createElement("button");
+      b.className="pill";
+      b.type="button";
+      b.textContent=(lg.sport?lg.sport+" · ":"")+(lg.location||lg["league id"]);
+      b.setAttribute("aria-pressed",String(state.current===lg));
+      b.addEventListener("click",function(){
+        state.current=lg;
+        Array.prototype.forEach.call(p.children,function(c){c.setAttribute("aria-pressed","false");});
+        b.setAttribute("aria-pressed","true");
+        render();
+      });
+      p.appendChild(b);
+    });
+  }
+
+  function start(leagues,fixtures,live){
+    state.leagues=leagues.filter(function(l){return (l.status||"active").toLowerCase()!=="hidden";});
+    state.fixtures=fixtures.map(normaliseFixture);
+    state.current=state.leagues[0]||null;
+    buildPicker();
+    if(!live){
+      var b=document.getElementById("banner");
+      b.textContent="Live results are temporarily unavailable — showing recent data. Refresh to try again.";
+      b.style.display="block";
+    }
+    document.getElementById("updated").textContent="Updated "+new Date().toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+    if(state.current) render();
+    else document.getElementById("loading").textContent="No leagues published yet — check back soon.";
+  }
+
+  Promise.all([gviz("Leagues"),gviz("Fixtures")])
+    .then(function(res){ start(res[0],res[1],true); })
+    .catch(function(){ start(FALLBACK.leagues,FALLBACK.fixtures,false); });
+})();
+
+/* Node test hook */
+if(typeof module!=="undefined"){module.exports={parseCSV:parseCSV,toObjects:toObjects,computeStandings:computeStandings,normaliseFixture:normaliseFixture};}
+</script>
+</body>
+</html>
